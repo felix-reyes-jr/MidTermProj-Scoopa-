@@ -1,0 +1,88 @@
+#include <string>
+#include "Card.cpp"
+#include <list>
+#include <stack>
+#include <vector>
+#include <iostream>
+#include <random>
+using namespace std;
+class Table {
+private:
+	list<Card> cardsOnTable;
+	stack<Card> deck;
+
+	stack<Card> populateDeck() {
+		vector<string> suits = { "hearts", "Diamonds", "Clubs", "Spades" };
+		list<Card>dck = {};
+		int idCounter = 0;
+
+		for (string suit : suits) {
+			for (int i = 1; i <= 10; i++) {
+				if (suit == "Diamonds") {
+					Card card = Card(true, i, idCounter);
+					deck.push(card);
+				}
+				else {
+					Card card = Card(false, i, idCounter);
+					deck.push(card);
+				}
+				idCounter++;
+			}
+		}
+	}
+
+public:
+	Table() {
+		deck = populateDeck();//not shuffled
+		cardsOnTable = {};
+	}
+
+	~Table() {
+		deck = populateDeck();//not shuffled
+		cardsOnTable = {};
+	}
+
+	void displayCardsonTable() {
+		cout << "Cards on the table";
+		for (Card card : cardsOnTable) {
+			cout << "{" << card.getCardId() << "} ";
+			if (card.isGold() == true) {
+				cout << "Gold " << card.getNumber();
+			}
+			else {
+				cout << card.getNumber();
+			}
+		}
+	 }
+
+	list<Card> getCardsOnTable() { return cardsOnTable; }
+
+	void setCardsOnTable(list<Card>cards) {
+		cardsOnTable = cards;
+	}
+
+	void addCardToTable(Card card) {
+		cardsOnTable.emplace_front(card);
+	}
+
+	void resetTable() {
+		cardsOnTable = {};
+		deck = this->populateDeck();
+	}
+
+	void shuffleDeck() {
+		vector<Card> cards;
+
+		while (!deck.empty()) {
+			cards.push_back(deck.top());
+			deck.pop();
+		}
+
+		std::random_device rand;
+		std::random_shuffle(cards.begin(), cards.end());
+
+		for (Card card : cards) {
+			deck.push(card);
+		}
+	}
+};

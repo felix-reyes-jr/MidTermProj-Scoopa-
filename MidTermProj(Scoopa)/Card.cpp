@@ -1,25 +1,26 @@
 #include <string>
 
 class Card {
-public:
-	static bool isGold;
+private:
+	static bool isgold;
 	static int number;
-	static int possibleCardPoints;
+	static int cardId;
+public:
 
 	Card() {
-		isGold = false;
+		isgold = false;
 		number = NULL;
-		possibleCardPoints = 0;
+		cardId = -1;
 	}
-	Card(bool gold, int num, int points) {
-		isGold = gold;
+	Card(bool gold, int num, int id) {
+		isgold = gold;
 		number = num;
-		possibleCardPoints = points;
+		cardId = id;
 	}
 	
-	bool isGold() { return isGold; }
+	bool isGold() { return isgold; }
 
 	int getNumber() { return number; }
 
-	int getPoints() { return possibleCardPoints; }
+	int getCardId() { return cardId; }
 };
