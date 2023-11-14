@@ -30,7 +30,7 @@ public:
 
 	}
 
-	Player(string nm, int point = 0, int Id, list<Card>hnd = {}, list<Card>earned) {
+	Player(string nm, int Id, int point = 0, list<Card>hnd = {}, list<Card>earned) {
 		name = nm;
 
 		points = point;
@@ -85,4 +85,6 @@ public:
 			}
 		}
 	}
+
+	int getPlayerId() { return playerId; }
 };

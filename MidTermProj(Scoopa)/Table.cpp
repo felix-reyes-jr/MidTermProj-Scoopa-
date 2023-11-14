@@ -65,8 +65,16 @@ public:
 		cardsOnTable.emplace_front(card);
 	}
 
+	/* Returns the specifed card on the table
+	* precondition: the card must be in the cardsOnTable List
+	*/
+	Card pickupFromTable(Card card) {
+		cardsOnTable.remove(card);
+		return card;
+	}
+
 	void resetTable() {
-		cardsOnTable = {};
+		cardsOnTable.clear();
 		deck = this->populateDeck();
 	}
 
@@ -84,5 +92,11 @@ public:
 		for (Card card : cards) {
 			deck.push(card);
 		}
+	}
+
+	Card pickupFromDeck() {
+		Card topCard = deck.top();
+		deck.pop();
+		return topCard;
 	}
 };
