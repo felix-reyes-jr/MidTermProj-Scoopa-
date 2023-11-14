@@ -13,22 +13,23 @@ private:
 
 	stack<Card> populateDeck() {
 		vector<string> suits = { "hearts", "Diamonds", "Clubs", "Spades" };
-		list<Card>dck = {};
+		stack<Card>dck = {};
 		int idCounter = 0;
 
 		for (string suit : suits) {
 			for (int i = 1; i <= 10; i++) {
 				if (suit == "Diamonds") {
 					Card card = Card(true, i, idCounter);
-					deck.push(card);
+					dck.push(card);
 				}
 				else {
 					Card card = Card(false, i, idCounter);
-					deck.push(card);
+					dck.push(card);
 				}
 				idCounter++;
 			}
 		}
+		return dck;
 	}
 
 public:
@@ -45,12 +46,12 @@ public:
 	void displayCardsonTable() {
 		cout << "Cards on the table";
 		for (Card card : cardsOnTable) {
-			cout << "{" << card.getCardId() << "} ";
+			cout << "{ID:" << card.getCardId() << "}|Number:";
 			if (card.isGold() == true) {
-				cout << "Gold " << card.getNumber();
+				cout << "Gold " << card.getNumber() << "| ";
 			}
 			else {
-				cout << card.getNumber();
+				cout << card.getNumber() << "| ";
 			}
 		}
 	 }

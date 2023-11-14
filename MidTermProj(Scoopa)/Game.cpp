@@ -1,4 +1,3 @@
-#include "Card.cpp"
 #include "Player.cpp"
 #include "Table.cpp"
 #include <string>
@@ -56,14 +55,14 @@ public:
 		return matchedCards;
 	}
 
-	void Round() {
+	/*void Round() {
 		bool roundEnd;
 		for (Player player : Players) {
 			cout << "Player" << player.getPlayerId() << " it's your turn! \n";
 
 		}
 
-	}
+	}*/
 
 	void turn(Player player) {
 		string input;

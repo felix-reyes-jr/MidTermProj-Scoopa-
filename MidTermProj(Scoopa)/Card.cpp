@@ -1,10 +1,12 @@
 #include <string>
 
-class Card {
+#ifndef Card_class
+#define Card_class
+class Card{
 private:
-	static bool isgold;
-	static int number;
-	static int cardId;
+	bool isgold;
+	int number;
+	int cardId;
 public:
 
 	Card() {
@@ -23,4 +25,10 @@ public:
 	int getNumber() { return number; }
 
 	int getCardId() { return cardId; }
+
+	bool operator==(const Card& other) const
+	{
+		return false;
+	}
 };
+#endif
