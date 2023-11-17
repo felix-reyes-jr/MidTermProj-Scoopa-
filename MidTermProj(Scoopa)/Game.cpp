@@ -26,10 +26,6 @@ public:
 			Players.emplace_back(player);
 		}
 	}
-	void startGame() {
-		table = Table();
-		table.shuffleDeck();
-	}
 
 	void dealCards() {
 		table.addCardToTable(table.pickupFromDeck());
@@ -110,37 +106,138 @@ public:
 		return matchedHappened;
 	}
 
-	bool Round() {
+	bool hasMostSevens(Player player, list<Player> players) {
+		int maxSevens = 0;
+		for (Player otherPlayer : players) {
+			if (otherPlayer.getSevens() > maxSevens) {
+				maxSevens = otherPlayer.getSevens();
+			}
+		}
+		return player.getSevens() == maxSevens;
+	}
+
+	Player checkTieForSevensOrSizes(Player player, list<Player> players) {
+		int sevensCount = 0;
+
+		for (Player otherPlayer : players) {
+			if (otherPlayer.getSevens() == player.getSevens()) {
+				if (otherPlayer.getSixes() == player.getSixes()) {
+					Player p = Player();
+					return p;
+				}
+				else if (otherPlayer.getSixes() > player.getSixes()) {
+					return otherPlayer;
+				}
+				else {
+					return player;
+				}
+				
+			}
+			else if (otherPlayer.getSevens() > player.getSevens()) {
+				return otherPlayer;
+			}
+			else {
+				return player;
+			}
+		}
+	}
+
+	bool checkTieForSixes(Player player, list<Player> players) {
+		int sixesCount = 0;
+
+		for (Player otherPlayer : players) {
+			if (otherPlayer.getSixes() == player.getSixes()) {
+				sixesCount++;
+			}
+		}
+
+		return sixesCount > 1;
+	}
+
+	bool hasMostGold(Player player, list<Player> players) {
+		int maxGold = 0;
+		for (Player otherPlayer : players) {
+			if (otherPlayer.getGold() > maxGold) {
+				maxGold = otherPlayer.getGold();
+			}
+		}
+		return player.getGold() == maxGold;
+	}
+
+	bool hasMostCards(Player player, list<Player> players) {
+		int maxCards = 0;
+		for (Player otherPlayer : players) {
+			if (otherPlayer.getNumberOfCards() > maxCards) {
+				maxCards = otherPlayer.getNumberOfCards();
+			}
+		}
+		return player.getNumberOfCards() == maxCards;
+	}
+
+	void endRound() {
+		table.resetTable();
+		for (Player player : Players) {
+
+			if (checkTieForSevens == false) {
+				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most sevens!" << endl;
+			}
+			else {
+
+			}
+			if (hasMostSevens(player, Players)) {
+				cout << "player" << player.getPlayerId() << ": " << player.getName() <<  " has the most sevens!" << endl;
+				player.addPoints(1);
+			}
+
+			if (hasMostGold(player, Players)) {
+				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most gold!" << endl;
+				player.addPoints(1);
+			}
+
+			if (hasMostCards(player, Players)) {
+				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most cards!" << endl;
+				player.addPoints(1);
+			}
+			player.resetHand();
+			player.resetEarned();
+		}
+		dealCards();
+	}
+
+	void round() {
 		bool roundEnd = false;
 		bool emptyHand = false;
-		for (Player player : Players) {
-			cout << "Player" << player.getPlayerId() << " it's your turn! \n";
-			turn(player);
-			//at the end of each turn we'll check to see if there are anymore cards in the deck
-			if (table.getDeck().empty()) {
-				//if there are no cards in the deck then we'll look at each player to see if they have a hand left
-				for (Player player : Players) {
-					//the player doesnt have a hand we'll track that with a boolean
-					if (player.getHand().empty()) {
-						emptyHand = true;
+		while(!roundEnd ){
+			for (Player player : Players) {
+				cout << "Player" << player.getPlayerId() << " it's your turn! \n";
+				turn(player);
+				//at the end of each turn we'll check to see if there are anymore cards in the deck
+				if (table.getDeck().empty()) {
+					//if there are no cards in the deck then we'll look at each player to see if they have a hand left
+					for (Player player : Players) {
+						//the player doesnt have a hand we'll track that with a boolean
+						if (player.getHand().empty()) {
+							emptyHand = true;
+						}
+						else {
+							//if atleast one player has a hand them\n the round contiues
+							emptyHand = false;
+						}
 					}
-					else {
-					//if atleast one player has a hand them\n the round contiues
-						emptyHand = false;
-					}
-				}
-				//all player have no hand then all remaining cards on the table go to the last player who picked up 
-				//and the round ends
-				if (emptyHand == false) {
-					for (Card card : table.getCardsOnTable()) {
-						player.addToEarned(card);
-						table.pickupFromTable(card);
-						roundEnd = true;
+					//all player have no hand then all remaining cards on the table go to the last player who picked up 
+					//and the round ends
+					if (emptyHand == false) {
+						for (Card card : table.getCardsOnTable()) {
+							player.addToEarned(card);
+							table.pickupFromTable(card);
+							roundEnd = true;
+							//call endRound function(it'll reset player hand, table, and deck, reshuffle(if needed), then deal 
+							break;
+						}
 					}
 				}
 			}
 		}
-		return roundEnd;
 
 	}
 
@@ -230,4 +327,20 @@ public:
 		}
 	}
 
+	void startGame() {
+		bool gameEnd;
+		table = Table();
+		dealCards();
+		while (!gameEnd) {
+			for (Player player : Players) {
+				if (player.getPoints() >= 11) {
+					gameEnd = true;
+					//call gameEnd Function here
+					break;
+				}
+
+			}
+			round();
+			}
+	}
 };

@@ -17,19 +17,6 @@ private:
 
 public:
 
-	Player() {
-		name = "";
-
-		points = 0;
-		
-		hand = {};
-
-		earnedCards = {};
-
-		playerId = -1;
-
-	}
-
 	Player(string nm = " ", int Id = -1, int point = 0, list<Card>hnd = {}, list<Card>earned = {}) {
 		name = nm;
 
@@ -94,5 +81,54 @@ public:
 		return desiredCard;
 	}
 
+	int getPoints() { return points; }
+
 	int getPlayerId() { return playerId; }
+
+	int getSevens() {
+		int sevens;
+		for (Card card : earnedCards) {
+			if (card.getNumber() == 7) {
+				sevens++;
+			}
+		}
+		return sevens;
+	}
+
+	int getNumberOfCards() {
+		return earnedCards.size();
+	}
+
+	int getGold() {
+		int golds;
+		for (Card card : earnedCards) {
+			if (card.isGold()) {
+				golds++;
+			}
+		}
+		return golds;
+	}
+
+	int getSixes() {
+		int sixes;
+		for (Card card : earnedCards) {
+			if (card.getNumber() == 6) {
+				sixes++;
+			}
+		}
+		return sixes;
+	}
+
+	bool hasGoldSeven() {
+		for (Card card : earnedCards) {
+			if (card.getNumber() == 7 && card.isGold()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	string getName() {
+		return name;
+	}
 };

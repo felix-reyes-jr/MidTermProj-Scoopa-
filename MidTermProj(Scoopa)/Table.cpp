@@ -40,7 +40,7 @@ public:
 	}
 
 	~Table() {
-		deck = populateDeck();
+		deck = {};
 		cardsOnTable = {};
 	}
 
@@ -108,8 +108,8 @@ public:
 
 	void resetTable() {
 		cardsOnTable.clear();
-		deck = this->populateDeck();
+		deck = {};
+		deck = populateDeck();
 		shuffleDeck();
-
 	}
 };
