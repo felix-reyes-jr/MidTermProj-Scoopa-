@@ -1,4 +1,6 @@
 #include <string>
+#include <iostream>
+using namespace std;
 
 #ifndef Card_class
 #define Card_class
@@ -29,6 +31,15 @@ public:
 	bool operator==(const Card& other) const
 	{
 		return false;
+	}
+
+	void displayCard() {
+		if (isgold) {
+			cout << "{ID: " << cardId << "}->|Gold: " << number << "| ";
+		}
+		else {
+			cout << "{ID: " << cardId << "}->| " << number << "| ";
+		}
 	}
 };
 #endif

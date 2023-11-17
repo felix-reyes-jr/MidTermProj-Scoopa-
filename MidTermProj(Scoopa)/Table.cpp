@@ -34,27 +34,37 @@ private:
 
 public:
 	Table() {
-		deck = populateDeck();//not shuffled
+		deck = populateDeck();
+		shuffleDeck();
 		cardsOnTable = {};
 	}
 
 	~Table() {
-		deck = populateDeck();//not shuffled
+		deck = populateDeck();
 		cardsOnTable = {};
 	}
 
+	stack<Card> getDeck() {
+		return deck;
+	}
+
 	void displayCardsonTable() {
-		cout << "Cards on the table";
+		cout << "Cards on the table: ";
 		for (Card card : cardsOnTable) {
-			cout << "{ID:" << card.getCardId() << "}|Number:";
-			if (card.isGold() == true) {
-				cout << "Gold " << card.getNumber() << "| ";
-			}
-			else {
-				cout << card.getNumber() << "| ";
+			card.displayCard();
+		}
+		cout << endl;
+	 }
+
+	Card getCardFromTable(int cardID) {
+		Card desiredCard = Card();
+		for (Card card : cardsOnTable) {
+			if (card.getCardId() == cardID) {
+				desiredCard = card;
 			}
 		}
-	 }
+		return desiredCard;
+	}
 
 	list<Card> getCardsOnTable() { return cardsOnTable; }
 
@@ -74,11 +84,6 @@ public:
 		return card;
 	}
 
-	void resetTable() {
-		cardsOnTable.clear();
-		deck = this->populateDeck();
-	}
-
 	void shuffleDeck() {
 		vector<Card> cards;
 
@@ -87,8 +92,8 @@ public:
 			deck.pop();
 		}
 
-		std::random_device rand;
-		std::random_shuffle(cards.begin(), cards.end());
+		random_device rand;
+		random_shuffle(cards.begin(), cards.end());
 
 		for (Card card : cards) {
 			deck.push(card);
@@ -99,5 +104,12 @@ public:
 		Card topCard = deck.top();
 		deck.pop();
 		return topCard;
+	}
+
+	void resetTable() {
+		cardsOnTable.clear();
+		deck = this->populateDeck();
+		shuffleDeck();
+
 	}
 };

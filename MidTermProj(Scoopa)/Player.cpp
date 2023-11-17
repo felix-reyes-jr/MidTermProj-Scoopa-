@@ -50,6 +50,7 @@ public:
 		hand.remove(card);
 	}
 
+
 	void addToEarned(Card card) {
 		hand.emplace_back(card);
 	}
@@ -75,15 +76,22 @@ public:
 	}
 
 	void DisplayHand() {
-		cout << "Your Hnd: \n";
+		cout << "Your Hand: \n";
 		for (Card card : hand) {
-			if (card.isGold() == true) {
-				cout << "|Gold " << card.getNumber() << "|, ";
-			}
-			else {
-				cout << "|" << card.getNumber() << "|, ";
+			cout << "{ID:" << card.getCardId() << "}|Number: ";
+			card.displayCard();
+		}
+		cout << endl;
+	}
+
+	Card getCard(int cID) {
+		Card desiredCard;
+		for (Card card : hand) {
+			if (card.getCardId() == cID) {
+				desiredCard = card;
 			}
 		}
+		return desiredCard;
 	}
 
 	int getPlayerId() { return playerId; }

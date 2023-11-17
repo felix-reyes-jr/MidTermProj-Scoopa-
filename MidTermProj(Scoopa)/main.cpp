@@ -13,6 +13,5 @@ int main() {
 	table.addCardToTable(table.pickupFromDeck());
 	table.addCardToTable(table.pickupFromDeck());
 	table.addCardToTable(table.pickupFromDeck());
-
 	table.displayCardsonTable();
 }
