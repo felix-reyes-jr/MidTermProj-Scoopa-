@@ -35,10 +35,10 @@ public:
 
 	void displayCard() {
 		if (isgold) {
-			cout << "{ID: " << cardId << "}->|Gold:" << number << "| ";
+			cout << "|{ID:" << cardId << "}->Gold:" << number << "| ";
 		}
 		else {
-			cout << "{ID: " << cardId << "}->|" << number << "| ";
+			cout << "|{ID:" << cardId << "}->" << number << "| ";
 		}
 	}
 };

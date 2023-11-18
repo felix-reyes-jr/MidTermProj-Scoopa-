@@ -16,6 +16,7 @@ private:
 
 public:
 	Game() {
+		table = table();
 		cout << "How many Players:";
 		cin >> playerCount;
 		cout << '\n';
@@ -58,7 +59,7 @@ public:
 	}
 
 	void dealCards() {
-		table.addCardToTable(table.pickupFromDeck());
+		this.table.addCardToTable(table.pickupFromDeck());
 		table.shuffleDeck();
 		table.addCardToTable(table.pickupFromDeck());
 		table.shuffleDeck();
@@ -258,7 +259,7 @@ public:
 					}
 					//all player have no hand then all remaining cards on the table go to the last player who picked up 
 					//and the round ends
-					if (emptyHand == false) {
+					if (emptyHand == true) {
 						for (Card card : table.getCardsOnTable()) {
 							player.addToEarned(card);
 							table.pickupFromTable(card);
@@ -279,8 +280,8 @@ public:
 							}
 						}
 						//all players have no hand but the deck is not empty, deal 3 more cards to players
-						if (emptyHand == false) {
-							dealToPlayers();
+						if (emptyHand == true) {
+							//dealToPlayers();
 						}
 					}
 				}
@@ -380,7 +381,6 @@ public:
 	void start() {
 		displayPlayers();
 		bool gameEnd = false;
-		table = Table();
 		dealCards();
 		while (!gameEnd) {
 			for (Player player : Players) {
