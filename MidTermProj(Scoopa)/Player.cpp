@@ -67,7 +67,6 @@ public:
 	void DisplayHand() {
 		cout << "Your Hand: \n";
 		for (Card card : hand) {
-			cout << "{ID:" << card.getCardId() << "}|Number: ";
 			card.displayCard();
 		}
 		cout << endl;

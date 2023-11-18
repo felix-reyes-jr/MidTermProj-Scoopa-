@@ -55,9 +55,9 @@ public:
 		table.addCardToTable(table.pickupFromDeck());
 		table.addCardToTable(table.pickupFromDeck());
 		for (int i = 1; i <= 3; i++) {
-			for (Player player : Players) {
-				player.addtoHand(table.pickupFromDeck());
-				player.DisplayHand();
+			for (list<Player>::iterator it = Players.begin(); it != Players.end(); ++it) {
+				it->addtoHand(table.pickupFromDeck());
+				it->DisplayHand();
 			}
 		}
 	}

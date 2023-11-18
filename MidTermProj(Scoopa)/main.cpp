@@ -15,8 +15,9 @@ int main() {
 	list<Player> players = game.getPlayers();
 
 	for (Player player : players) {
-		cout << "PLayer" << player.getPlayerId() << " ";
+		cout << "Player" << player.getPlayerId() << " ";
 		player.DisplayHand();
 	}
-	//game.start();
+	cout << endl;
+	game.start();
 }
