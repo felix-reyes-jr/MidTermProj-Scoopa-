@@ -54,11 +54,12 @@ public:
 		table.addCardToTable(table.pickupFromDeck());
 		table.addCardToTable(table.pickupFromDeck());
 		table.addCardToTable(table.pickupFromDeck());
-			for (int i = 1; i <= 3; i++) {
-				for (Player player : Players) {
-					player.addtoHand(table.pickupFromDeck());
-				}
+		for (int i = 1; i <= 3; i++) {
+			for (Player player : Players) {
+				player.addtoHand(table.pickupFromDeck());
+				player.DisplayHand();
 			}
+		}
 	}
 
 	list<Card> match(list<Card> cardsToMatch, Card card) {
@@ -326,11 +327,15 @@ public:
 		list<Card>cardsToMatch = {};
 		string input;
 		int handCId;
-		cout << "Remeber, to match you must choose either a card with the same number as on in your hand from the table \n"
+		cout << "Remeber, to match you must choose either a card with the same number as one in your hand from the table \n"
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
 		cout << "Would you like to match [y/n]";
 		cin >> input;
+		if (player.getHand().empty()) {
+			cout << "No cards in hand, cannot play!" << endl;
+			return;
+		}
 		if (input == "y") {
 			if (table.getCardsOnTable().empty()) {
 				noMatch(player);

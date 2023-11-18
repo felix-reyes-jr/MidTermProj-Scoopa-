@@ -9,6 +9,14 @@ using namespace std;
 
 int main() {
 	Game game = Game();
+	game.displayPlayers();
+	game.dealCards();
+	game.getTable().displayCardsonTable();
+	list<Player> players = game.getPlayers();
 
-	game.start();
+	for (Player player : players) {
+		cout << "PLayer" << player.getPlayerId() << " ";
+		player.DisplayHand();
+	}
+	//game.start();
 }

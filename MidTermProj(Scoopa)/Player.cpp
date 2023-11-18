@@ -32,7 +32,7 @@ public:
 	}
 
 	void addtoHand(Card card) {
-		hand.emplace_back(card);
+		hand.emplace_front(card);
 	}
 
 	void removefromHand(Card card) {
