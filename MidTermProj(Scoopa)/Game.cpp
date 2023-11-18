@@ -86,24 +86,25 @@ public:
 		bool matchedHappened = false;
 		int cId;
 		table.displayCardsonTable();
-		cout << "what card would you like to match: " << endl;
+		cout << "what card would you like to match: ";
 		cin >> cId;
+		cout << endl << endl;
 		Card tableCard = table.getCardFromTable(cId);
 		list<Card> cardsToMatch;
 		cardsToMatch.emplace_front(tableCard);
 		list<Card> matched = match(cardsToMatch, handCard);
 		if (!matched.empty()) {
 			matchedHappened = true;
-			player.removefromHand(handCard);
+			player.removefromHand(handCard.getCardId());
 			player.addToEarned(handCard);
 			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
-			cout << "With cards: " << endl;
+			cout << "With cards: ";
 			for (Card card : matched) {
-				cout << "card: " << card.getNumber() << " ";
+				card.displayCard();
 				table.pickupFromTable(card);
 				player.addToEarned(card);
 			}
-			cout << endl;
+			cout << endl << endl;
 		}
 		return matchedHappened;
 	}
@@ -127,6 +128,8 @@ public:
 		list<Card> matched = match(cardsToSumMatch, handCard);
 		if (!matched.empty()) {
 			matchedHappened = true;
+			player.removefromHand(handCard.getCardId());
+			player.addToEarned(handCard);
 			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
 			cout << "With cards: " << endl;
 			for (Card card : matched) { 
@@ -146,7 +149,7 @@ public:
 		cout << "pick a card to put down on the table : ";
 		cin >> handCId;
 		Card handCard = player.getCard(handCId);
-		player.removefromHand(handCard);
+		player.removefromHand(handCard.getCardId());
 		table.addCardToTable(handCard);
 		cout << "Card: ";
 		handCard.displayCard();
@@ -302,15 +305,15 @@ public:
 		}
 		table.displayCardsonTable();
 		cout << endl;
-		cout << "Your usable hand: ";
+		cout << "Your usable hand: \n";
 		for (Card card : useableHand) {
 			card.displayCard();
 		}
 		cout << endl;
-		cout << "What card in your hand would you like to choose pick the number in the {}:";
+		cout << "What card in your hand would you like to choose, type the number in the {}:";
 		cin >> handCId;
 		Card handCard = player.getCard(handCId);
-		cout << "\n would you like to pick one [o] or more cards[m]: ";
+		cout << "\n would you like to pick one[o] or more cards[m] from the table: ";
 		cin >> input;
 		if (input == "o") {
 			if (matchOneCard(player, handCard) == true) {
@@ -359,8 +362,8 @@ public:
 		cout << "Remeber, to match you must choose either a card with the same number as one in your hand from the table \n"
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
-		player.DisplayHand();
 		table.displayCardsonTable();
+		player.DisplayHand();
 		cout << "Would you like to match [y/n]";
 		cin >> input;
 		if (player.getHand().empty()) {
@@ -379,7 +382,7 @@ public:
 			cout << "What card in your hand would you like to choose to put down, type the number in the {}:";
 			cin >> handCId;
 			Card handCard = player.getCard(handCId);
-			player.removefromHand(handCard);
+			player.removefromHand(handCard.getCardId());
 			table.addCardToTable(handCard);
 			return;
 		}

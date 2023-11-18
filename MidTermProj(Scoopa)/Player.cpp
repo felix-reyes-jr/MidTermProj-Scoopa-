@@ -35,8 +35,12 @@ public:
 		hand.emplace_front(card);
 	}
 
-	void removefromHand(Card card) {
-		hand.remove(card);
+	void removefromHand(int cardId) {
+		for (Card card : hand) {
+			if (card.getCardId() == cardId) {
+				hand.remove(card);
+			}
+		}
 	}
 
 

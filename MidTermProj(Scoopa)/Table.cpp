@@ -51,7 +51,7 @@ public:
 	}
 
 	void displayCardsonTable() {
-		cout << "Cards on the table: ";
+		cout << "Cards on the table: \n";
 		for (Card card : cardsOnTable) {
 			card.displayCard();
 		}
