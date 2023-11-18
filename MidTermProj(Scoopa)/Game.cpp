@@ -300,7 +300,6 @@ public:
 			noMatch(player);
 			return;
 		}
-		cout << "table cards: ";
 		table.displayCardsonTable();
 		cout << endl;
 		cout << "Your usable hand: ";
@@ -361,6 +360,7 @@ public:
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
 		player.DisplayHand();
+		table.displayCardsonTable();
 		cout << "Would you like to match [y/n]";
 		cin >> input;
 		if (player.getHand().empty()) {
