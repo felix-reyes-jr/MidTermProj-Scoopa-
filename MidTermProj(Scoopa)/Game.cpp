@@ -21,7 +21,7 @@ public:
 		cout << '\n';
 		for (int i = 1; i <= playerCount; i++) {
 			string playerName;
-			cout << "player" << i << " What is your name: ";
+			cout << "Player" << i << " what is your name: ";
 			cin >> playerName;
 			cout << '\n';
 			Player player = Player(playerName, i);
@@ -44,8 +44,9 @@ public:
 	void displayPlayers() {
 		cout << "All Players: ";
 		for (Player player : Players) {
-			cout << "Player" << player.getPlayerId() << ":" << player.getName() << " ";
+			cout << "Player" << player.getPlayerId() << ":" << player.getName() << "\t";
 		}
+		cout << endl;
 	}
 
 	void dealCards() {
@@ -325,7 +326,7 @@ public:
 		list<Card>cardsToMatch = {};
 		string input;
 		int handCId;
-		cout << "Remeber to match, you must choose either a card with the same number as on in your hand from the table \n"
+		cout << "Remeber, to match you must choose either a card with the same number as on in your hand from the table \n"
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
 		cout << "Would you like to match [y/n]";
@@ -348,7 +349,8 @@ public:
 		}
 	}
 
-	void startGame() {
+	void start() {
+		displayPlayers();
 		bool gameEnd = false;
 		table = Table();
 		dealCards();
