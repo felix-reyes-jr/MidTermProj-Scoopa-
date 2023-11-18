@@ -3,6 +3,8 @@
 #include <list>
 #include <iostream>
 using namespace std;
+#ifndef Player_class
+#define Player_class
 class Player {
 private:
 	string name; //name if player
@@ -86,7 +88,7 @@ public:
 	int getPlayerId() { return playerId; }
 
 	int getSevens() {
-		int sevens;
+		int sevens = 0;
 		for (Card card : earnedCards) {
 			if (card.getNumber() == 7) {
 				sevens++;
@@ -100,7 +102,7 @@ public:
 	}
 
 	int getGold() {
-		int golds;
+		int golds = 0;
 		for (Card card : earnedCards) {
 			if (card.isGold()) {
 				golds++;
@@ -110,7 +112,7 @@ public:
 	}
 
 	int getSixes() {
-		int sixes;
+		int sixes = 0;
 		for (Card card : earnedCards) {
 			if (card.getNumber() == 6) {
 				sixes++;
@@ -132,3 +134,4 @@ public:
 		return name;
 	}
 };
+#endif

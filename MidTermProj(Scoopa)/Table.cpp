@@ -6,6 +6,8 @@
 #include <iostream>
 #include <random>
 using namespace std;
+#ifndef Table_class
+#define Table_class
 class Table {
 private:
 	list<Card> cardsOnTable;
@@ -113,3 +115,4 @@ public:
 		shuffleDeck();
 	}
 };
+#endif

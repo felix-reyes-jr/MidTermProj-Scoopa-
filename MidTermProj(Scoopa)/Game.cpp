@@ -6,6 +6,8 @@
 #include <iostream>
 
 using namespace std;
+#ifndef Game_class
+#define Game_class
 class Game {
 private:
 	int playerCount;
@@ -24,6 +26,25 @@ public:
 			cout << '\n';
 			Player player = Player(playerName, i);
 			Players.emplace_back(player);
+		}
+	}
+
+	list<Player> getPlayers() {
+		return Players;
+	}
+
+	int getPlayerCount() {
+		return playerCount;
+	}
+
+	Table getTable() {
+		return table;
+	}
+
+	void displayPlayers() {
+		cout << "All Players: ";
+		for (Player player : Players) {
+			cout << "Player" << player.getPlayerId() << ":" << player.getName() << " ";
 		}
 	}
 
@@ -106,14 +127,18 @@ public:
 		return matchedHappened;
 	}
 
-	bool hasMostSevens(Player player, list<Player> players) {
-		int maxSevens = 0;
-		for (Player otherPlayer : players) {
-			if (otherPlayer.getSevens() > maxSevens) {
-				maxSevens = otherPlayer.getSevens();
-			}
-		}
-		return player.getSevens() == maxSevens;
+	void noMatch(Player player) {
+		int handCId;
+		cout << "No matches possible" << endl;
+		player.DisplayHand();
+		cout << "pick a card to put down on the table : ";
+		cin >> handCId;
+		Card handCard = player.getCard(handCId);
+		player.removefromHand(handCard);
+		table.addCardToTable(handCard);
+		cout << "Card: ";
+		handCard.displayCard();
+		cout << " put down";
 	}
 
 	Player checkTieForSevensOrSizes(Player player, list<Player> players) {
@@ -142,18 +167,6 @@ public:
 		}
 	}
 
-	bool checkTieForSixes(Player player, list<Player> players) {
-		int sixesCount = 0;
-
-		for (Player otherPlayer : players) {
-			if (otherPlayer.getSixes() == player.getSixes()) {
-				sixesCount++;
-			}
-		}
-
-		return sixesCount > 1;
-	}
-
 	bool hasMostGold(Player player, list<Player> players) {
 		int maxGold = 0;
 		for (Player otherPlayer : players) {
@@ -174,19 +187,24 @@ public:
 		return player.getNumberOfCards() == maxCards;
 	}
 
+	void isScoopa(Player player) {
+		if (table.getCardsOnTable().empty()) {
+			cout << "Player" << player.getPlayerId() << ": " << player.getName() << " you got scoopa!!!" << endl
+				<< "One point awarded to you!";
+			player.addPoints(1);
+		}
+	}
+
 	void endRound() {
 		table.resetTable();
 		for (Player player : Players) {
-
-			if (checkTieForSevens == false) {
-				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most sevens!" << endl;
+			Player p = checkTieForSevensOrSizes(player, Players);
+			if (p.getPlayerId() != -1 && p.getPlayerId() == player.getPlayerId()) {
+				cout << "Player" << p.getPlayerId() << ": " << p.getName() << "has the most Sevens/Sixes!";
+				player.addPoints(1);
 			}
 			else {
-
-			}
-			if (hasMostSevens(player, Players)) {
-				cout << "player" << player.getPlayerId() << ": " << player.getName() <<  " has the most sevens!" << endl;
-				player.addPoints(1);
+				cout << "Sevens and sixes tied! No points";
 			}
 
 			if (hasMostGold(player, Players)) {
@@ -196,6 +214,11 @@ public:
 
 			if (hasMostCards(player, Players)) {
 				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most cards!" << endl;
+				player.addPoints(1);
+			}
+
+			if (player.hasGoldSeven()) {
+				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the Golden Seven!" << endl;
 				player.addPoints(1);
 			}
 			player.resetHand();
@@ -241,29 +264,17 @@ public:
 
 	}
 
-	void turnHelper(Player player, string input, list<Card> playerHand) {
+	void turnHelper(Player player, list<Card> playerHand) {
 		int handCId;
+		string input;
 		list<Card> useableHand = playerHand;
 		if (useableHand.empty()) {
-			cout << "No possible matches" << endl;
-			player.DisplayHand();
-			cout << "pick a card to put down on the table : ";
-			cin >> handCId;
-			Card handCard = player.getCard(handCId);
-			player.removefromHand(handCard);
-			table.addCardToTable(handCard);
-			cout << "Card: ";  
-			handCard.displayCard();
+			noMatch(player);
+			return;
 		}
-		cout << "Your hand: ";
+		cout << "Your usable hand: ";
 		for (Card card : useableHand) {
-			cout << "{ID:" << card.getCardId() << "}|Number: ";
-			if (card.isGold() == true) {
-				cout << "Gold " << card.getNumber() << "|, ";
-			}
-			else {
-				cout << card.getNumber() << "|, ";
-			}
+			card.displayCard();
 		}
 		cout << "What card in your hand would you like to choose pick the number in the {}:";
 		cin >> handCId;
@@ -272,27 +283,41 @@ public:
 		cin >> input;
 		if (input == "o") {
 			if (matchOneCard(player, handCard) == true) {
+				isScoopa(player);
 				return;
 			}
 			else {
 				cout << "Lets try multiple cards to sum up and match!";
 				if (matchMultipleCards(player, handCard) == true) {
+					isScoopa(player);
 					return;
 				}
 				else {
-
+					useableHand.remove(handCard);
+					turnHelper(player, useableHand);
 				}
 			}
 		}
-		if (input == "m") {
+		else if (input == "m") {
 			if (matchMultipleCards(player, handCard) == true) {
+				isScoopa(player);
 				return;
 			}
 			else {
 				cout << "Lets try one card to match!";
-
+				if (matchOneCard(player, handCard) == true) {
+					isScoopa(player);
+					return;
+				}
+				else {
+					useableHand.remove(handCard);
+					turnHelper(player, useableHand);
+				}
 			}
 
+		}
+		else {
+			turnHelper(player, useableHand);
 		}
 	}
 
@@ -306,29 +331,25 @@ public:
 		cout << "Would you like to match [y/n]";
 		cin >> input;
 		if (input == "y") {
-			table.displayCardsonTable();
+			if (table.getCardsOnTable().empty()) {
+				noMatch(player);
+				return;
+			}
+			turnHelper(player, player.getHand());
+		}
+		else {
 			player.DisplayHand();
-			cout << "What card in your hand would you like to choose pick the number in the {}:";
+			cout << "What card in your hand would you like to choose to put down, type the number in the {}:";
 			cin >> handCId;
 			Card handCard = player.getCard(handCId);
-			cout << "/n would you like to pick one [o] or more cards[m]: ";
-			cin >> input;
-			if (input == "o") {
-				if (matchOneCard(player, handCard) == true) {
-					return;
-				}
-			}
-			if (input == "m") {
-				if (matchMultipleCards(player, handCard) == true) {
-					return;
-				}
-				
-			}
+			player.removefromHand(handCard);
+			table.addCardToTable(handCard);
+			return;
 		}
 	}
 
 	void startGame() {
-		bool gameEnd;
+		bool gameEnd = false;
 		table = Table();
 		dealCards();
 		while (!gameEnd) {
@@ -341,6 +362,7 @@ public:
 
 			}
 			round();
-			}
+		}
 	}
 };
+#endif
