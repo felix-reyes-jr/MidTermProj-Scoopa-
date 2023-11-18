@@ -97,7 +97,7 @@ public:
 	}
 
 	int getNumberOfCards() {
-		return earnedCards.size();
+		return static_cast<int>(earnedCards.size());
 	}
 
 	int getGold() {

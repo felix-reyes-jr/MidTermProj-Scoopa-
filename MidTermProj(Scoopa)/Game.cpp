@@ -16,7 +16,7 @@ private:
 
 public:
 	Game() {
-		table = table();
+		table = Table();
 		cout << "How many Players:";
 		cin >> playerCount;
 		cout << '\n';
@@ -59,7 +59,7 @@ public:
 	}
 
 	void dealCards() {
-		this.table.addCardToTable(table.pickupFromDeck());
+		table.addCardToTable(table.pickupFromDeck());
 		table.shuffleDeck();
 		table.addCardToTable(table.pickupFromDeck());
 		table.shuffleDeck();
@@ -103,6 +103,7 @@ public:
 				table.pickupFromTable(card);
 				player.addToEarned(card);
 			}
+			cout << endl;
 		}
 		return matchedHappened;
 	}
@@ -133,6 +134,7 @@ public:
 				table.pickupFromTable(card); 
 				player.addToEarned(card); 
 			}
+			cout << endl;
 		}
 		return matchedHappened;
 	}
@@ -298,10 +300,14 @@ public:
 			noMatch(player);
 			return;
 		}
+		cout << "table cards: ";
+		table.displayCardsonTable();
+		cout << endl;
 		cout << "Your usable hand: ";
 		for (Card card : useableHand) {
 			card.displayCard();
 		}
+		cout << endl;
 		cout << "What card in your hand would you like to choose pick the number in the {}:";
 		cin >> handCId;
 		Card handCard = player.getCard(handCId);
@@ -354,6 +360,7 @@ public:
 		cout << "Remeber, to match you must choose either a card with the same number as one in your hand from the table \n"
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
+		player.DisplayHand();
 		cout << "Would you like to match [y/n]";
 		cin >> input;
 		if (player.getHand().empty()) {
