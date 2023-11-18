@@ -94,10 +94,23 @@ public:
 			deck.pop();
 		}
 
-		random_device rand;
-		random_shuffle(cards.begin(), cards.end());
+		// Generate a sequence of shuffled indices
+		vector<int> indices(cards.size());
+		for (int i = 0; i < indices.size(); i++) {
+			indices[i] = i;
+		}
+		std::random_device rand;
+		std::mt19937 g(rand());
+		std::shuffle(indices.begin(), indices.end(), g);
 
-		for (Card card : cards) {
+		// Reorder the cards according to the shuffled indices
+		vector<Card> shuffledCards(cards.size());
+		for (int i = 0; i < cards.size(); i++) {
+			shuffledCards[i] = cards[indices[i]];
+		}
+
+		// Put the shuffled cards back into the deck
+		for (Card card : shuffledCards) {
 			deck.push(card);
 		}
 	}

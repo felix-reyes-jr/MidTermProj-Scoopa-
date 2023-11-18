@@ -49,17 +49,24 @@ public:
 		cout << endl;
 	}
 
-	void dealCards() {
-		table.addCardToTable(table.pickupFromDeck());
-		table.addCardToTable(table.pickupFromDeck());
-		table.addCardToTable(table.pickupFromDeck());
-		table.addCardToTable(table.pickupFromDeck());
+	void dealToPlayers() {
 		for (int i = 1; i <= 3; i++) {
 			for (list<Player>::iterator it = Players.begin(); it != Players.end(); ++it) {
 				it->addtoHand(table.pickupFromDeck());
-				it->DisplayHand();
 			}
 		}
+	}
+
+	void dealCards() {
+		table.addCardToTable(table.pickupFromDeck());
+		table.shuffleDeck();
+		table.addCardToTable(table.pickupFromDeck());
+		table.shuffleDeck();
+		table.addCardToTable(table.pickupFromDeck());
+		table.shuffleDeck();
+		table.addCardToTable(table.pickupFromDeck());
+		table.shuffleDeck();
+		dealToPlayers();
 	}
 
 	list<Card> match(list<Card> cardsToMatch, Card card) {
@@ -258,6 +265,22 @@ public:
 							roundEnd = true;
 							//call endRound function(it'll reset player hand, table, and deck, reshuffle(if needed), then deal 
 							break;
+						}
+					}
+					else {
+						for (Player player : Players) {
+							//the player doesnt have a hand we'll track that with a boolean
+							if (player.getHand().empty()) {
+								emptyHand = true;
+							}
+							else {
+								//if atleast one player has a hand them\n the round contiues
+								emptyHand = false;
+							}
+						}
+						//all players have no hand but the deck is not empty, deal 3 more cards to players
+						if (emptyHand == false) {
+							dealToPlayers();
 						}
 					}
 				}
