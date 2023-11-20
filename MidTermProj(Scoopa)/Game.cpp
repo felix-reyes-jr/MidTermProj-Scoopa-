@@ -306,22 +306,22 @@ public:
 
 	}
 
-	Player turnHelper(Player player, list<Card> playerHand) {
+	Player turnHelper(Player *player, list<Card> playerHand) {
 		int handCId;
 		string input;
 		list<Card> useableHand = playerHand;
 		if (useableHand.empty()) {
 			cout << "No matches possible" << endl;
-			player.DisplayHand();
+			player->DisplayHand();
 			cout << "pick a card to put down on the table, type the number in the {}: ";
 			cin >> handCId;
-			Card handCard = player.getCard(handCId);
-			player.removefromHand(handCId);
+			Card handCard = player->getCard(handCId);
+			player->removefromHand(handCId);
 			table.addCardToTable(handCard);
 			cout << "You put down ";
 			handCard.displayCard();
 			cout << endl;
-			return player;
+			return *player;
 		}
 		table.displayCardsonTable();
 		cout << endl;
@@ -332,30 +332,30 @@ public:
 		cout << endl;
 		cout << "What card in your hand would you like to choose, type the number in the {}:";
 		cin >> handCId;
-		Card handCard = player.getCard(handCId);
+		Card handCard = player->getCard(handCId);
 		cout << "\n";
-			if (matchMultipleCards(&player, handCard) == true) {
-				isScoopa(player);
-				player.removefromHand(handCId);
-				pickedUpLast(player);
-				return player;
+			if (matchMultipleCards(player, handCard) == true) {
+				isScoopa(*player);
+				player->removefromHand(handCId);
+				pickedUpLast(*player);
+				return *player;
 			}
 			else {
 				cout << "match failed!" << endl;
 				cout << "Lets try again!" << endl;;
-				if (matchMultipleCards(&player, handCard) == true) {
-					isScoopa(player);
-					player.removefromHand(handCId);
-					pickedUpLast(player);
-					return player;
+				if (matchMultipleCards(player, handCard) == true) {
+					isScoopa(*player);
+					player->removefromHand(handCId);
+					pickedUpLast(*player);
+					return *player;
 				}
 				else {
-					Card card = player.getCard(handCId);
+					Card card = player->getCard(handCId);
 					useableHand.remove(card);
 					return turnHelper(player, useableHand);
 				}
 			}
-		return player;
+		return *player;
 	}
 
 	Player turn(Player player) {
@@ -388,7 +388,7 @@ public:
 				cout << endl;
 				return player;
 			}
-			player = turnHelper(player, player.getHand());
+			player = turnHelper(&player, player.getHand());
 		}
 		else {
 			player.DisplayHand();
