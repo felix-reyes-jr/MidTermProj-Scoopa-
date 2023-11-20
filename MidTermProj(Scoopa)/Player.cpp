@@ -36,10 +36,11 @@ public:
 	}
 
 	void removefromHand(int cardId) {
-		for (Card card : hand) {
-			if (card.getCardId() == cardId) {
-				hand.remove(card);
-			}
+		list<Card>::iterator itr;
+		for (itr = hand.begin(); itr != hand.end(); ++itr) { 
+			if (itr->getCardId() == cardId) { 
+				hand.erase(itr); break; 
+			} 
 		}
 	}
 
@@ -78,12 +79,13 @@ public:
 
 	Card getCard(int cID) {
 		Card desiredCard;
-		for (Card card : hand) {
-			if (card.getCardId() == cID) {
-				desiredCard = card;
+		list<Card>::iterator itr;
+		for (itr = hand.begin(); itr != hand.end(); ++itr) {
+			if (itr->getCardId() == cID) {
+				return *itr;
 			}
 		}
-		return desiredCard;
+		return *itr;
 	}
 
 	int getPoints() { return points; }

@@ -82,7 +82,7 @@ public:
 		return matchedCards;
 	}
 
-	bool matchOneCard(Player player, Card handCard) {
+	bool matchOneCard(Player player, Card handCard, int handCardId) {
 		bool matchedHappened = false;
 		int cId;
 		table.displayCardsonTable();
@@ -95,13 +95,12 @@ public:
 		list<Card> matched = match(cardsToMatch, handCard);
 		if (!matched.empty()) {
 			matchedHappened = true;
-			player.removefromHand(handCard.getCardId());
 			player.addToEarned(handCard);
 			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
 			cout << "With cards: ";
 			for (Card card : matched) {
 				card.displayCard();
-				table.pickupFromTable(card);
+				table.pickupFromTable(card.getCardId());
 				player.addToEarned(card);
 			}
 			cout << endl << endl;
@@ -109,7 +108,7 @@ public:
 		return matchedHappened;
 	}
 
-	bool matchMultipleCards(Player player, Card handCard) {
+	bool matchMultipleCards(Player player, Card handCard, int handCardId) {
 		bool matchedHappened = false;
 		int cId;
 		int cardCount;
@@ -125,19 +124,19 @@ public:
 				cardsToSumMatch.emplace_back(tableCard);
 			}
 		}
+		cout << "\n" << endl;
 		list<Card> matched = match(cardsToSumMatch, handCard);
 		if (!matched.empty()) {
 			matchedHappened = true;
-			player.removefromHand(handCard.getCardId());
 			player.addToEarned(handCard);
 			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
 			cout << "With cards: " << endl;
 			for (Card card : matched) { 
 				cout << "card: " << card.getNumber() << " "; 
-				table.pickupFromTable(card); 
+				table.pickupFromTable(card.getCardId()); 
 				player.addToEarned(card); 
 			}
-			cout << endl;
+			cout << endl << endl;;
 		}
 		return matchedHappened;
 	}
@@ -149,11 +148,11 @@ public:
 		cout << "pick a card to put down on the table : ";
 		cin >> handCId;
 		Card handCard = player.getCard(handCId);
-		player.removefromHand(handCard.getCardId());
+		player.removefromHand(handCId);
 		table.addCardToTable(handCard);
 		cout << "Card: ";
 		handCard.displayCard();
-		cout << " put down";
+		cout << " put down" << endl << endl;
 	}
 
 	Player checkTieForSevensOrSizes(Player player, list<Player> players) {
@@ -205,14 +204,15 @@ public:
 	void isScoopa(Player player) {
 		if (table.getCardsOnTable().empty()) {
 			cout << "Player" << player.getPlayerId() << ": " << player.getName() << " you got scoopa!!!" << endl
-				<< "One point awarded to you!";
+				<< "One point awarded to you!" << endl;
 			player.addPoints(1);
 		}
 	}
 
 	void endRound() {
 		table.resetTable();
-		for (Player player : Players) {
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			Player player = *it;
 			Player p = checkTieForSevensOrSizes(player, Players);
 			if (p.getPlayerId() != -1 && p.getPlayerId() == player.getPlayerId()) {
 				cout << "Player" << p.getPlayerId() << ": " << p.getName() << "has the most Sevens/Sixes!";
@@ -246,15 +246,16 @@ public:
 		bool roundEnd = false;
 		bool emptyHand = false;
 		while(!roundEnd ){
-			for (Player player : Players) {
-				cout << "Player" << player.getPlayerId() << " it's your turn! \n";
-				turn(player);
+			for (auto it = Players.begin(); it != Players.end(); ++it) {
+				cout << "Player" << it->getPlayerId() << " it's your turn! \n";
+				*it = turn(*it);
 				//at the end of each turn we'll check to see if there are anymore cards in the deck
 				if (table.getDeck().empty()) {
 					//if there are no cards in the deck then we'll look at each player to see if they have a hand left
-					for (Player player : Players) {
+					bool emptyHand = true;
+					for (auto it2 = Players.begin(); it2 != Players.end(); ++it2) {
 						//the player doesnt have a hand we'll track that with a boolean
-						if (player.getHand().empty()) {
+						if (it2->getHand().empty()) {
 							emptyHand = true;
 						}
 						else {
@@ -266,28 +267,15 @@ public:
 					//and the round ends
 					if (emptyHand == true) {
 						for (Card card : table.getCardsOnTable()) {
-							player.addToEarned(card);
-							table.pickupFromTable(card);
+							it->addToEarned(card);
+							table.pickupFromTable(card.getCardId());
 							roundEnd = true;
 							//call endRound function(it'll reset player hand, table, and deck, reshuffle(if needed), then deal 
 							break;
 						}
 					}
 					else {
-						for (Player player : Players) {
-							//the player doesnt have a hand we'll track that with a boolean
-							if (player.getHand().empty()) {
-								emptyHand = true;
-							}
-							else {
-								//if atleast one player has a hand them\n the round contiues
-								emptyHand = false;
-							}
-						}
-						//all players have no hand but the deck is not empty, deal 3 more cards to players
-						if (emptyHand == true) {
-							//dealToPlayers();
-						}
+						dealToPlayers();
 					}
 				}
 			}
@@ -315,14 +303,17 @@ public:
 		Card handCard = player.getCard(handCId);
 		cout << "\n would you like to pick one[o] or more cards[m] from the table: ";
 		cin >> input;
+		cout << "\n";
 		if (input == "o") {
-			if (matchOneCard(player, handCard) == true) {
+			if (matchOneCard(player, handCard, handCId) == true) {
+				player.removefromHand(handCId);
 				isScoopa(player);
 				return;
 			}
 			else {
 				cout << "Lets try multiple cards to sum up and match!";
-				if (matchMultipleCards(player, handCard) == true) {
+				if (matchMultipleCards(player, handCard, handCId) == true) {
+					player.removefromHand(handCId);
 					isScoopa(player);
 					return;
 				}
@@ -333,14 +324,16 @@ public:
 			}
 		}
 		else if (input == "m") {
-			if (matchMultipleCards(player, handCard) == true) {
+			if (matchMultipleCards(player, handCard, handCId) == true) {
+				player.removefromHand(handCId);
 				isScoopa(player);
 				return;
 			}
 			else {
 				cout << "Lets try one card to match!";
-				if (matchOneCard(player, handCard) == true) {
+				if (matchOneCard(player, handCard, handCId) == true) {
 					isScoopa(player);
+					player.removefromHand(handCId);
 					return;
 				}
 				else {
@@ -355,25 +348,26 @@ public:
 		}
 	}
 
-	void turn(Player player) {
+	Player turn(Player player) {
 		list<Card>cardsToMatch = {};
 		string input;
 		int handCId;
-		cout << "Remeber, to match you must choose either a card with the same number as one in your hand from the table \n"
+		cout << "\n" << "Remeber, to match you must choose either a card with the same number as one in your hand from the table \n"
 			<< "or you must pick a number of cards " 
 			<< "that are less than and add up to a card in your hand" << endl;
 		table.displayCardsonTable();
 		player.DisplayHand();
 		cout << "Would you like to match [y/n]";
 		cin >> input;
+		cout << "\n" << endl;
 		if (player.getHand().empty()) {
 			cout << "No cards in hand, cannot play!" << endl;
-			return;
+			return player;
 		}
 		if (input == "y") {
 			if (table.getCardsOnTable().empty()) {
 				noMatch(player);
-				return;
+				return player;
 			}
 			turnHelper(player, player.getHand());
 		}
@@ -382,14 +376,19 @@ public:
 			cout << "What card in your hand would you like to choose to put down, type the number in the {}:";
 			cin >> handCId;
 			Card handCard = player.getCard(handCId);
-			player.removefromHand(handCard.getCardId());
+			player.removefromHand(handCId);
 			table.addCardToTable(handCard);
-			return;
+			cout << "You put down ";
+			handCard.displayCard(); 
+			cout << endl;
+			return player;
 		}
+		return player;
 	}
 
 	void start() {
 		displayPlayers();
+		cout << "\n";
 		bool gameEnd = false;
 		dealCards();
 		while (!gameEnd) {

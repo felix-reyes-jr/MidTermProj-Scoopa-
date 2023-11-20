@@ -81,9 +81,15 @@ public:
 	/* Returns the specifed card on the table
 	* precondition: the card must be in the cardsOnTable List
 	*/
-	Card pickupFromTable(Card card) {
-		cardsOnTable.remove(card);
-		return card;
+	void pickupFromTable(int cardId) {
+		list<Card>::iterator itr;
+		for (itr = cardsOnTable.begin(); itr != cardsOnTable.end(); ++itr) {
+			if (itr->getCardId() == cardId) {
+				cardsOnTable.erase(itr); 
+				break;
+			}
+		}
+
 	}
 
 	void shuffleDeck() {
