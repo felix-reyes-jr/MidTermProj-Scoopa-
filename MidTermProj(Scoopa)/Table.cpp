@@ -15,7 +15,7 @@ private:
 
 	stack<Card> populateDeck() {
 		vector<string> suits = { "hearts", "Diamonds", "Clubs", "Spades" };
-		int idCounter = 0;
+		int idCounter = 1;
 
 		for (string suit : suits) {
 			for (int i = 1; i <= 10; i++) {

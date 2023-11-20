@@ -30,6 +30,16 @@ public:
 		}
 	}
 
+	Game(int count, list<Player>& player) {
+		table = Table();
+		playerCount = count;
+		Players = player;
+	}
+
+	void setPlayers(list<Player> players) {
+		Players = players;
+	}
+
 	list<Player> getPlayers() {
 		return Players;
 	}
@@ -55,6 +65,14 @@ public:
 			for (list<Player>::iterator it = Players.begin(); it != Players.end(); ++it) {
 				it->addtoHand(table.pickupFromDeck());
 			}
+		}
+	}
+
+	void resetPlayers() {
+		for (auto it = Players.begin(); it != Players.end(); ++it) { 
+			Player player = *it;
+			player.resetHand(); 
+			player.resetEarned(); 
 		}
 	}
 
@@ -99,39 +117,16 @@ public:
 		return matchedCards;
 	}
 
-	bool matchOneCard(Player player, Card handCard) {
-		bool matchedHappened = false;
-		int cId;
-		table.displayCardsonTable();
-		cout << "what card would you like to match, type the number in the {}: ";
-		cin >> cId;
-		cout << endl << endl;
-		Card tableCard = table.getCardFromTable(cId);
-		list<Card> cardsToMatch;
-		cardsToMatch.emplace_front(tableCard);
-		list<Card> matched = match(cardsToMatch, handCard);
-		if (!matched.empty()) {
-			matchedHappened = true;
-			player.addToEarned(handCard);
-			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
-			cout << "With cards: ";
-			for (Card card : matched) {
-				card.displayCard();
-				table.pickupFromTable(card.getCardId());
-				player.addToEarned(card);
-			}
-			cout << endl << endl;
-		}
-		return matchedHappened;
-	}
-
-	bool matchMultipleCards(Player player, Card handCard) {
+	bool matchMultipleCards(Player *player, Card handCard) {
 		bool matchedHappened = false;
 		int cId;
 		int cardCount;
 		list<Card> cardsToSumMatch;
+		cout << "Card from hand: ";
+		handCard.displayCard();
+		cout << endl;
 		table.displayCardsonTable();
-		cout << "What total cards are you trying to sum up to match: ";
+		cout << "How many cards are you trying to sum up to match: ";
 		cin >> cardCount;
 		for (int i = 1; i <= cardCount; i++) {
 			cout << "Please enter the number in {} for card " << i << ": ";
@@ -145,15 +140,15 @@ public:
 		list<Card> matched = match(cardsToSumMatch, handCard);
 		if (!matched.empty()) {
 			matchedHappened = true;
-			player.addToEarned(handCard);
+			player->addToEarned(handCard);
 			cout << "you matched: " << handCard.getNumber() << " from your hand" << endl;
 			cout << "With cards: " << endl;
 			for (Card card : matched) { 
 				cout << "card: " << card.getNumber() << " "; 
 				table.pickupFromTable(card.getCardId()); 
-				player.addToEarned(card); 
+				player->addToEarned(card); 
 			}
-			cout << endl << endl;;
+			cout << endl << endl;
 		}
 		return matchedHappened;
 	}
@@ -191,24 +186,30 @@ public:
 		}
 	}
 
-	bool hasMostGold(Player player, list<Player> players) {
+	Player hasMostGold(list<Player>& players) {
 		int maxGold = 0;
-		for (Player otherPlayer : players) {
+		Player maxGoldPlayer = Player();
+		for (auto it = players.begin(); it != players.end(); ++it) { 
+			Player otherPlayer = *it; 
 			if (otherPlayer.getGold() > maxGold) {
 				maxGold = otherPlayer.getGold();
+				maxGoldPlayer = otherPlayer;
 			}
 		}
-		return player.getGold() == maxGold;
+		return maxGoldPlayer;
 	}
 
-	bool hasMostCards(Player player, list<Player> players) {
+	Player hasMostCards(list<Player>& players) {
 		int maxCards = 0;
-		for (Player otherPlayer : players) {
-			if (otherPlayer.getNumberOfCards() > maxCards) {
-				maxCards = otherPlayer.getNumberOfCards();
+		Player maxCardPlayer = Player();
+		for (auto it = players.begin(); it != players.end(); ++it) {
+			Player otherPlayer = *it;
+			if (otherPlayer.getNumberOfCards() > maxCards) { 
+				maxCards = otherPlayer.getNumberOfCards(); 
+				maxCardPlayer = otherPlayer;
 			}
 		}
-		return player.getNumberOfCards() == maxCards;
+		return maxCardPlayer; 
 	}
 
 	void isScoopa(Player player) {
@@ -227,57 +228,80 @@ public:
 		}
 	}
 
-	void endRound() {
-		table.resetTable();
-		for (auto it = Players.begin(); it != Players.end(); ++it) {
-			Player player = *it;
-			Player p = checkTieForSevensOrSizes(player, Players);
-			if (p.getPlayerId() != -1 && p.getPlayerId() == player.getPlayerId()) {
-				cout << "Player" << p.getPlayerId() << ": " << p.getName() << "has the most Sevens/Sixes!";
-				player.addPoints(1);
-			}
-			else {
-				cout << "Sevens and sixes tied! No points";
+	void rewardPlayers(list<Player>& players) {
+		int maxGold = 0;
+		int maxCards = 0;
+		int maxSevens = 0;
+		int maxSixes = 0;
+		Player maxGoldPlayer;
+		Player maxCardsPlayer;
+		Player maxSevensPlayer;
+		Player maxSixesPlayer;
+
+		for (Player& player : players) {
+			int playerGold = player.getGold();
+			int playerCards = player.getNumberOfCards();
+			int playerSevens = player.getSevens();
+			int playerSixes = player.getSixes();
+
+			if (playerGold > maxGold) {
+				maxGold = playerGold;
+				maxGoldPlayer = player;
 			}
 
-			if (hasMostGold(player, Players)) {
-				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most gold!" << endl;
-				player.addPoints(1);
+			if (playerCards > maxCards) {
+				maxCards = playerCards;
+				maxCardsPlayer = player;
 			}
 
-			if (hasMostCards(player, Players)) {
-				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the most cards!" << endl;
-				player.addPoints(1);
+			if (playerSevens > maxSevens) {
+				maxSevens = playerSevens;
+				maxSevensPlayer = player;
 			}
 
-			if (player.hasGoldSeven()) {
-				cout << "player" << player.getPlayerId() << ": " << player.getName() << " has the Golden Seven!" << endl;
-				player.addPoints(1);
+			if (playerSixes > maxSixes) {
+				maxSixes = playerSixes;
+				maxSixesPlayer = player;
 			}
-			cout << "Player has " << player.getPoints() << "points" << endl;
-			player.resetHand();
-			player.resetEarned();
 		}
+
+		maxGoldPlayer.addPoints(1);
+		maxCardsPlayer.addPoints(1);
+		maxSevensPlayer.addPoints(1);
+		maxSixesPlayer.addPoints(1);
+	}
+
+	void endRound(list<Player> players) {
+		Player mostGold = hasMostCards(players);
+		Player mostCards = hasMostCards(players);
+
+		rewardPlayers(players);
+		for (Player player : players) {
+			cout << player.getName() << " has " << player.getPoints() << " points" << endl;
+		}
+		table.resetTable();
+		resetPlayers();
 		dealCards();
 	}
 
 	void round() {
 		bool roundEnd = false;
 		bool emptyHand = false;
-		while(!roundEnd ){
+		int i = 0;
+		while(!roundEnd || i!=4){
 			for (auto it = Players.begin(); it != Players.end(); ++it) {
-				cout << "Player" << it->getPlayerId() << " it's your turn! \n";
+				cout << "PLAYER:" << it->getPlayerId() << " IT'S YOUR TURN \n";
 				*it = turn(*it);
 			}
 			if (isDeckandHandsEmpty()) {
 				cout << "\n Round Over!" << endl;
-				endRound();
+				endRound(Players);
 			}
 			else if (emptyHands()) {
-				cout << "\n dealing new hands to players!" << endl;
+				cout << "\ndealing new hands to players!\n" << endl;
 				dealToPlayers();
 			}
-
+			i++;
 		}
 
 	}
@@ -309,20 +333,17 @@ public:
 		cout << "What card in your hand would you like to choose, type the number in the {}:";
 		cin >> handCId;
 		Card handCard = player.getCard(handCId);
-		cout << "\n would you like to pick one[o] or more cards[m] from the table: ";
-		cin >> input;
 		cout << "\n";
-		if (input == "o") {
-			if (matchOneCard(player, handCard) == true) {
+			if (matchMultipleCards(&player, handCard) == true) {
 				isScoopa(player);
 				player.removefromHand(handCId);
 				pickedUpLast(player);
 				return player;
 			}
 			else {
-				cout << "A one card match was not possible!" << endl;
-				cout << "Lets try multiple cards to sum up and match!";
-				if (matchMultipleCards(player, handCard) == true) {
+				cout << "match failed!" << endl;
+				cout << "Lets try again!" << endl;;
+				if (matchMultipleCards(&player, handCard) == true) {
 					isScoopa(player);
 					player.removefromHand(handCId);
 					pickedUpLast(player);
@@ -334,34 +355,6 @@ public:
 					return turnHelper(player, useableHand);
 				}
 			}
-		}
-		else if (input == "m") {
-			if (matchMultipleCards(player, handCard) == true) {
-				isScoopa(player);
-				player.removefromHand(handCId);
-				pickedUpLast(player);
-				return player;
-			}
-			else {
-				cout << "A multiple card match was not possible!" << endl;
-				cout << "Lets try one card to match!" << endl;;
-				if (matchOneCard(player, handCard) == true) {
-					isScoopa(player);
-					player.removefromHand(handCId);
-					pickedUpLast(player);
-					return player;
-				}
-				else {
-					Card card = player.getCard(handCId);
-					useableHand.remove(card);
-					return turnHelper(player, useableHand);
-				}
-			}
-
-		}
-		else {
-			return turnHelper(player, useableHand);
-		}
 		return player;
 	}
 
@@ -406,7 +399,7 @@ public:
 			table.addCardToTable(handCard);
 			cout << "You put down ";
 			handCard.displayCard(); 
-			cout << endl << endl;
+			cout << "\n \n" << endl;
 				;
 			return player;
 		}
@@ -414,7 +407,6 @@ public:
 	}
 
 	void start() {
-		displayPlayers();
 		cout << "\n";
 		bool gameEnd = false;
 		dealCards();

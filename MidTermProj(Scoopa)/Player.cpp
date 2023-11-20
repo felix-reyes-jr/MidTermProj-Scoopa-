@@ -44,9 +44,8 @@ public:
 		}
 	}
 
-
 	void addToEarned(Card card) {
-		hand.emplace_back(card);
+		earnedCards.push_back(card);
 	}
 
 	void resetHand() {
@@ -72,6 +71,14 @@ public:
 	void DisplayHand() {
 		cout << "Your Hand: \n";
 		for (Card card : hand) {
+			card.displayCard();
+		}
+		cout << endl;
+	}
+
+	void displayEarned() {
+		cout << "Earned cards: " << endl;
+		for (Card card : earnedCards) {
 			card.displayCard();
 		}
 		cout << endl;
