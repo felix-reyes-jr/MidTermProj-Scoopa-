@@ -138,5 +138,9 @@ public:
 	string getName() {
 		return name;
 	}
+
+	bool isHandEmpty() {
+		return hand.empty();
+	}
 };
 #endif

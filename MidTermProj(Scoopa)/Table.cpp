@@ -15,23 +15,22 @@ private:
 
 	stack<Card> populateDeck() {
 		vector<string> suits = { "hearts", "Diamonds", "Clubs", "Spades" };
-		stack<Card>dck = {};
 		int idCounter = 0;
 
 		for (string suit : suits) {
 			for (int i = 1; i <= 10; i++) {
 				if (suit == "Diamonds") {
 					Card card = Card(true, i, idCounter);
-					dck.push(card);
+					deck.push(card);
 				}
 				else {
 					Card card = Card(false, i, idCounter);
-					dck.push(card);
+					deck.push(card);
 				}
 				idCounter++;
 			}
 		}
-		return dck;
+		return deck;
 	}
 
 public:
@@ -132,6 +131,10 @@ public:
 		deck = {};
 		deck = populateDeck();
 		shuffleDeck();
+	}
+
+	bool isDeckEmpty() {
+		return deck.empty();
 	}
 };
 #endif

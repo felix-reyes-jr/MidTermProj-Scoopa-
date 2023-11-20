@@ -28,11 +28,6 @@ public:
 
 	int getCardId() { return cardId; }
 
-	bool operator==(const Card& other) const
-	{
-		return false;
-	}
-
 	void displayCard() {
 		if (isgold) {
 			cout << "|{ID:" << cardId << "}->Gold:" << number << "| ";
@@ -40,6 +35,13 @@ public:
 		else {
 			cout << "|{ID:" << cardId << "}->" << number << "| ";
 		}
+	}
+
+	bool operator== (const Card &other) const {
+		if ((this->cardId == other.cardId) && (this->number == other.number) && (this->isgold == other.isgold)) {
+			return true;
+		}
+		return false;
 	}
 };
 #endif
