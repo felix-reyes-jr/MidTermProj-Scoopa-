@@ -186,30 +186,50 @@ public:
 		}
 	}
 
-	Player hasMostGold(list<Player>& players) {
+	bool hasMostGold(Player& player) {
 		int maxGold = 0;
-		Player maxGoldPlayer = Player();
-		for (auto it = players.begin(); it != players.end(); ++it) { 
-			Player otherPlayer = *it; 
-			if (otherPlayer.getGold() > maxGold) {
-				maxGold = otherPlayer.getGold();
-				maxGoldPlayer = otherPlayer;
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			if (it->getGold() > maxGold) {
+				maxGold = it->getGold();
 			}
 		}
-		return maxGoldPlayer;
+		return player.getGold() == maxGold;
 	}
 
-	Player hasMostCards(list<Player>& players) {
-		int maxCards = 0;
-		Player maxCardPlayer = Player();
-		for (auto it = players.begin(); it != players.end(); ++it) {
-			Player otherPlayer = *it;
-			if (otherPlayer.getNumberOfCards() > maxCards) { 
-				maxCards = otherPlayer.getNumberOfCards(); 
-				maxCardPlayer = otherPlayer;
+	bool hasMostCards(Player& player) {
+		int mostCards = 0;
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			if (it->getGold() > mostCards) {
+				mostCards = it->getNumberOfCards();
 			}
 		}
-		return maxCardPlayer; 
+		return player.getNumberOfCards() == mostCards;
+	}
+
+	bool tiedForSevens(Player& player) {
+		int maxSevens = 0;
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			if (it->getSevens() > maxSevens) {
+				maxSevens = it->getSevens();
+			}
+		}
+		int tieCounter = 0;
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			if (it->getSevens() == maxSevens) {
+				tieCounter++;
+			}
+		}
+		return tieCounter > 1;
+	}
+
+	bool hasMostSixes(Player& player) {
+		int maxSixes = 0;
+		for (auto it = Players.begin(); it != Players.end(); ++it) {
+			if (it->getSixes() > maxSixes) {
+				maxSixes = it->getSixes();
+			}
+		}
+		return player.getNumberOfCards() == maxSixes;
 	}
 
 	void isScoopa(Player player) {
@@ -228,55 +248,28 @@ public:
 		}
 	}
 
-	void rewardPlayers(list<Player>& players) {
-		int maxGold = 0;
-		int maxCards = 0;
-		int maxSevens = 0;
-		int maxSixes = 0;
-		Player maxGoldPlayer;
-		Player maxCardsPlayer;
-		Player maxSevensPlayer;
-		Player maxSixesPlayer;
+	void rewardPlayers() {
 
-		for (Player& player : players) {
-			int playerGold = player.getGold();
-			int playerCards = player.getNumberOfCards();
-			int playerSevens = player.getSevens();
-			int playerSixes = player.getSixes();
-
-			if (playerGold > maxGold) {
-				maxGold = playerGold;
-				maxGoldPlayer = player;
+		for (list<Player>::iterator it = Players.begin(); it != Players.end(); ++it) {
+			if (hasMostGold(*it)) {
+				it->addPoints(1);
 			}
-
-			if (playerCards > maxCards) {
-				maxCards = playerCards;
-				maxCardsPlayer = player;
+			if (!tiedForSevens(*it)) {
+				it->addPoints(1);
 			}
-
-			if (playerSevens > maxSevens) {
-				maxSevens = playerSevens;
-				maxSevensPlayer = player;
+			else if (hasMostSixes(*it)) {
+				it->addPoints(1);
 			}
-
-			if (playerSixes > maxSixes) {
-				maxSixes = playerSixes;
-				maxSixesPlayer = player;
+			if (it->hasGoldSeven()) {
+				it->addPoints(1);
 			}
 		}
-
-		maxGoldPlayer.addPoints(1);
-		maxCardsPlayer.addPoints(1);
-		maxSevensPlayer.addPoints(1);
-		maxSixesPlayer.addPoints(1);
 	}
 
-	void endRound(list<Player> players) {
-		Player mostGold = hasMostCards(players);
-		Player mostCards = hasMostCards(players);
+	void endRound() {
 
-		rewardPlayers(players);
-		for (Player player : players) {
+		rewardPlayers();
+		for (Player player : Players) {
 			cout << player.getName() << " has " << player.getPoints() << " points" << endl;
 		}
 		table.resetTable();
@@ -286,24 +279,26 @@ public:
 
 	void round() {
 		bool roundEnd = false;
-		bool emptyHand = false;
 		int i = 0;
-		while(!roundEnd || i!=4){
+		while(!roundEnd){
 			for (auto it = Players.begin(); it != Players.end(); ++it) {
 				cout << "PLAYER:" << it->getPlayerId() << " IT'S YOUR TURN \n";
 				*it = turn(*it);
 			}
+			i += 2;
+			if (i >= 2) {
+				roundEnd = true;
+			}
 			if (isDeckandHandsEmpty()) {
 				cout << "\n Round Over!" << endl;
-				endRound(Players);
+				roundEnd = true;
 			}
 			else if (emptyHands()) {
 				cout << "\ndealing new hands to players!\n" << endl;
 				dealToPlayers();
 			}
-			i++;
 		}
-
+		endRound();
 	}
 
 	Player turnHelper(Player *player, list<Card> playerHand) {
