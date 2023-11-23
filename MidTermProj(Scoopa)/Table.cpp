@@ -13,6 +13,7 @@ private:
 	list<Card> cardsOnTable;
 	stack<Card> deck;
 
+	//a private function to create the deck cards, used for the constructor
 	stack<Card> populateDeck() {
 		vector<string> suits = { "hearts", "Diamonds", "Clubs", "Spades" };
 		int idCounter = 1;
@@ -34,21 +35,25 @@ private:
 	}
 
 public:
+	//constructor for the table class
 	Table() {
 		deck = populateDeck();
 		shuffleDeck();
 		cardsOnTable = {};
 	}
 
+	//deconstructor for the table class
 	~Table() {
 		deck = {};
 		cardsOnTable = {};
 	}
 
+	//returns the deck stack
 	stack<Card> getDeck() {
 		return deck;
 	}
 
+	//displays all the cards on the table
 	void displayCardsonTable() {
 		cout << "Cards on the table: \n";
 		for (Card card : cardsOnTable) {
@@ -57,6 +62,7 @@ public:
 		cout << endl;
 	 }
 
+	//reuturns a card from the table with the given card ID
 	Card getCardFromTable(int cardID) {
 		Card desiredCard = Card();
 		for (Card card : cardsOnTable) {
@@ -67,12 +73,15 @@ public:
 		return desiredCard;
 	}
 
+
 	list<Card> getCardsOnTable() { return cardsOnTable; }
 
+	//sets the cards on the table list to a given list
 	void setCardsOnTable(list<Card>cards) {
 		cardsOnTable = cards;
 	}
 
+	//adds the given card to the cards on the table list
 	void addCardToTable(Card card) {
 		cardsOnTable.emplace_front(card);
 	}
@@ -91,6 +100,7 @@ public:
 
 	}
 
+	//shuffles the deck stack
 	void shuffleDeck() {
 		vector<Card> cards;
 
@@ -120,12 +130,14 @@ public:
 		}
 	}
 
+	//returns the first card of the deck stack and removes it
 	Card pickupFromDeck() {
 		Card topCard = deck.top();
 		deck.pop();
 		return topCard;
 	}
 
+	//clears the table of cards, resets the deck and shuffles it
 	void resetTable() {
 		cardsOnTable.clear();
 		deck = {};
@@ -133,6 +145,7 @@ public:
 		shuffleDeck();
 	}
 
+	//checks whether the deck is empty
 	bool isDeckEmpty() {
 		return deck.empty();
 	}

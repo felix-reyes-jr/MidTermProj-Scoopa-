@@ -401,6 +401,13 @@ public:
 		return player;
 	}
 
+	//a function called when the game ends
+	void gameEnd(Player player) {
+		cout << "Congrats " << player.getName() << " You won with " << player.getPoints() << " Points!" << endl;
+		cout << "THANKS FOR PLAYING!!" << endl;
+	}
+
+	// a function to start the game and run until a player has 11 or more points
 	void start() {
 		cout << "\n";
 		bool gameEnd = false;
